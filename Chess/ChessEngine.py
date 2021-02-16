@@ -71,3 +71,9 @@ class Move:
 
     def getRankFile(self, r, c):
         return self.colesToFiles[c] + self.rowsToRanks[r]
+
+    def __eq__(self, other):
+        if isinstance(other, Move):
+            return self.getChessNotation() == other.getChessNotation()
+
+        return False
