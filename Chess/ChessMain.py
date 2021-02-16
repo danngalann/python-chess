@@ -45,6 +45,9 @@ def main():
                     print(move.getChessNotation())
                     selectedSq = ()
                     clicks = []
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:
+                    gs.undoMove()
 
         clock.tick(MAX_FPS)
         p.display.flip()
