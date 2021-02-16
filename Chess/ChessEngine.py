@@ -26,6 +26,28 @@ class GameState:
             self.board[lastMove.startRow][lastMove.startCol] = lastMove.pieceMoved
             self.whiteToMove = not self.whiteToMove
 
+    # Possible moves considering check
+    def getValidMoves(self):
+        return self.getPosibleMoves()
+
+    # Possible moves without considering check
+    def getPosibleMoves(self):
+        moves = []
+        for r in range(len(self.board)):
+            for c in range(len(self.board[r])):
+                turn = self.board[r][c][0]
+                if (turn == 'w' and self.whiteToMove) and (turn == 'b' and not self.whiteToMove):
+                    piece = self.board[r][c][1]
+
+                    if piece == 'p':
+                        self.getPawnMoves(r, c, moves)
+
+        return moves
+
+    def getPawnMoves(self, r, c, moves):
+        pass
+
+
 class Move:
     ranksToRows = {"1": 7, "2": 6, "3": 5, "4": 4,
                    "5": 3, "6": 2, "7": 1, "8": 0}
