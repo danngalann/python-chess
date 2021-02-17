@@ -12,12 +12,24 @@ class GameState:
         ]
         self.whiteToMove = True
         self.moveLog = []
+        self.moveFunctionMap = {
+            'P': self.getPawnMoves,
+            'R': self.getRookMoves,
+            'N': self.getKnightMoves,
+            'B': self.getBishopMoves,
+            'K': self.getKingMoves,
+            'Q': self.getQueenMoves
+        }
 
     def makeMove(self, move):
         self.board[move.startRow][move.startCol] = '--'
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move)
+
+        moveText = "White: " if self.whiteToMove else "Black: "
         self.whiteToMove = not self.whiteToMove
+
+        print(moveText + move.getChessNotation())
 
     def undoMove(self):
         if len(self.moveLog) > 0:
@@ -28,23 +40,62 @@ class GameState:
 
     # Possible moves considering check
     def getValidMoves(self):
-        return self.getPosibleMoves()
+        return self.getPossibleMoves()
 
     # Possible moves without considering check
-    def getPosibleMoves(self):
+    def getPossibleMoves(self):
         moves = []
         for r in range(len(self.board)):
             for c in range(len(self.board[r])):
                 turn = self.board[r][c][0]
-                if (turn == 'w' and self.whiteToMove) and (turn == 'b' and not self.whiteToMove):
+                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
                     piece = self.board[r][c][1]
-
-                    if piece == 'p':
-                        self.getPawnMoves(r, c, moves)
+                    self.moveFunctionMap[piece](r, c, moves)
 
         return moves
 
     def getPawnMoves(self, r, c, moves):
+        if self.whiteToMove:
+            # Look space one square front
+            if self.board[r - 1][c] == '--':
+                moves.append(Move((r, c), (r - 1, c), self.board))
+                # Look space two squares if pawn on starting position
+                if r == 6 and self.board[r-2][c] == '--':
+                    moves.append(Move((r, c), (r - 2, c), self.board))
+            # Look for diagonals, but don't go off the board.
+            # Also don't capture your own pieces
+            if c-1 >= 0:
+                if self.board[r-1][c-1] != '--' and self.board[r + 1][c-1][0] != "w":
+                    moves.append(Move((r, c), (r - 1, c - 1), self.board))
+            if c+1 <= 7:
+                if self.board[r-1][c+1] != '--' and self.board[r + 1][c+1][0] != "w":
+                    moves.append(Move((r, c), (r - 1, c + 1), self.board))
+        else:
+            if self.board[r + 1][c] == '--':
+                moves.append(Move((r, c), (r + 1, c), self.board))
+                if r == 1 and self.board[r + 2][c] == '--':
+                    moves.append(Move((r, c), (r + 2, c), self.board))
+
+            if c - 1 >= 0:
+                if self.board[r + 1][c - 1] != '--' and self.board[r + 1][c - 1][0] != "b":
+                    moves.append(Move((r, c), (r + 1, c - 1), self.board))
+            if c + 1 <= 7:
+                if self.board[r + 1][c + 1] != '--' and self.board[r + 1][c + 1][0] != "b":
+                    moves.append(Move((r, c), (r + 1, c + 1), self.board))
+
+    def getRookMoves(self, r, c, moves):
+        pass
+
+    def getBishopMoves(self, r, c, moves):
+        pass
+
+    def getKnightMoves(self, r, c, moves):
+        pass
+
+    def getQueenMoves(self, r, c, moves):
+        pass
+
+    def getKingMoves(self, r, c, moves):
         pass
 
 
