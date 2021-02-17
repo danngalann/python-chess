@@ -7,10 +7,12 @@ SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 
+
 def loadImages():
     pieces = ['wP', 'wR', 'wB', 'wQ', 'wK', 'wN', 'bR', 'bB', 'bP', 'bQ', 'bK', 'bN']
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load('Chess/images/'+piece+'.png'), (SQ_SIZE, SQ_SIZE))
+        IMAGES[piece] = p.transform.scale(p.image.load('Chess/images/' + piece + '.png'), (SQ_SIZE, SQ_SIZE))
+
 
 def main():
     p.init()
@@ -32,8 +34,8 @@ def main():
                 running = False
             elif e.type == p.MOUSEBUTTONDOWN:
                 location = p.mouse.get_pos()
-                col = location[0]//SQ_SIZE
-                row = location[1]//SQ_SIZE
+                col = location[0] // SQ_SIZE
+                row = location[1] // SQ_SIZE
                 if selectedSq == (row, col):
                     selectedSq = ()
                     clicks = []
@@ -65,15 +67,17 @@ def main():
 
 
 def drawGameState(screen, gs):
-    drawBoard(screen) # Draws squares
-    drawPieces(screen, gs.board) # Draws pieces on squares
+    drawBoard(screen)  # Draws squares
+    drawPieces(screen, gs.board)  # Draws pieces on squares
+
 
 def drawBoard(screen):
     colors = [(235, 235, 208), (119, 148, 85)]
     for r in range(DIMENSION):
         for c in range(DIMENSION):
-            color = colors[(r+c)%2]
-            p.draw.rect(screen, color, p.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+            color = colors[(r + c) % 2]
+            p.draw.rect(screen, color, p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
 
 def drawPieces(screen, board):
     for r in range(DIMENSION):
@@ -81,4 +85,4 @@ def drawPieces(screen, board):
             piece = board[r][c]
             if piece != "--":
                 image = IMAGES[piece]
-                screen.blit(image, p.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+                screen.blit(image, p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))

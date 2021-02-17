@@ -22,6 +22,8 @@ class GameState:
         }
         self.whiteKingLocation = (7, 4)
         self.blackKingLocation = (0, 4)
+        self.checkMate = False
+        self.staleMate = False
 
     def makeMove(self, move):
         self.board[move.startRow][move.startCol] = '--'
@@ -33,10 +35,7 @@ class GameState:
         if move.pieceMoved == 'bK':
             self.blackKingLocation = (move.endRow, move.endCol)
 
-        moveText = "White: " if self.whiteToMove else "Black: "
         self.whiteToMove = not self.whiteToMove
-
-        print(moveText + move.getChessNotation())
 
     def undoMove(self):
         if len(self.moveLog) > 0:
@@ -52,7 +51,42 @@ class GameState:
 
     # Possible moves considering check
     def getValidMoves(self):
-        return self.getPossibleMoves()
+        moves = self.getPossibleMoves()
+        for i in range(len(moves) - 1, -1, -1):
+            self.makeMove(moves[i])
+            self.whiteToMove = not self.whiteToMove
+            if self.inCheck():
+                moves.remove(moves[i])
+
+            self.whiteToMove = not self.whiteToMove
+            self.undoMove()
+
+        if len(moves) == 0:
+            if self.inCheck():
+                self.checkMate = True
+            else:
+                self.staleMate = True
+        # Reset variables to be able to undo checkmates
+        else:
+            self.checkMate = False
+            self.staleMate = False
+        return moves
+
+    def inCheck(self):
+        if self.whiteToMove:
+            return self.squareUnderAttack(self.whiteKingLocation[0], self.whiteKingLocation[1])
+        else:
+            return self.squareUnderAttack(self.blackKingLocation[0], self.blackKingLocation[1])
+
+    def squareUnderAttack(self, r, c):
+        self.whiteToMove = not self.whiteToMove  # Switch to opponent's POV
+        oppMoves = self.getPossibleMoves()
+        self.whiteToMove = not self.whiteToMove
+        for move in oppMoves:
+            if move.endRow == r and move.endCol == c:
+                return True
+
+        return False
 
     # Possible moves without considering check
     def getPossibleMoves(self):
