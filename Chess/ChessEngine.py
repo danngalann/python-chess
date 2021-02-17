@@ -118,7 +118,9 @@ class Move:
         self.pieceCaptured = board[self.endRow][self.endCol]
 
     def getChessNotation(self):
-        return self.getRankFile(self.startRow, self.startCol) + self.getRankFile(self.endRow, self.endCol)
+        start = self.getRankFile(self.startRow, self.startCol)
+        end = self.getRankFile(self.endRow, self.endCol)
+        return start + end if self.pieceCaptured == '--' else start + "x" + end
 
     def getRankFile(self, r, c):
         return self.colesToFiles[c] + self.rowsToRanks[r]
